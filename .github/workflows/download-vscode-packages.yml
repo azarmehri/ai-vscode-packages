@@ -1,0 +1,53 @@
+name: Download VS Code Packages
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download extension packages
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+
+          curl -fL \
+            "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/openai/vsextensions/chatgpt/latest/vspackage" \
+            -o dist/openai-chatgpt.vsix
+
+          curl -fL \
+            "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/anthropic/vsextensions/claude-code/latest/vspackage" \
+            -o dist/anthropic-claude-code.vsix
+
+      - name: Create timestamp
+        id: ts
+        run: echo "value=$(date -u +'%Y-%m-%dT%H-%M-%SZ')" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: vscode-packages-latest
+          name: VS Code packages (latest)
+          body: |
+            Auto-updated VSIX packages from the Visual Studio Marketplace.
+
+            Updated at: ${{ steps.ts.outputs.value }} (UTC)
+          files: |
+            dist/openai-chatgpt.vsix
+            dist/anthropic-claude-code.vsix
+          prerelease: false
+          make_latest: true
+          append_body: false
+          generate_release_notes: false
+          draft: false
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
