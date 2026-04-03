@@ -20,11 +20,11 @@ jobs:
           mkdir -p dist
 
           curl -fL \
-            "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/openai/vsextensions/chatgpt/latest/vspackage" \
+            "https://openai.gallery.vsassets.io/_apis/public/gallery/publisher/openai/extension/chatgpt/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage" \
             -o dist/openai-chatgpt.vsix
 
           curl -fL \
-            "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/anthropic/vsextensions/claude-code/latest/vspackage" \
+            "https://anthropic.gallery.vsassets.io/_apis/public/gallery/publisher/anthropic/extension/claude-code/latest/assetbyname/Microsoft.VisualStudio.Services.VSIXPackage" \
             -o dist/anthropic-claude-code.vsix
 
       - name: Create timestamp
